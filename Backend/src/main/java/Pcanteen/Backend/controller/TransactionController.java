@@ -12,8 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@Tag(name = "Transaction API", description = "Operations related to transactions") // Change name/desc as per controller
+
+//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/transactions")
 public class TransactionController {

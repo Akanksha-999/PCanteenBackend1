@@ -94,6 +94,12 @@ public class SecurityConfig {
                  .requestMatchers("/api/feedback/suggestions/create").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
                  .requestMatchers("/api/feedback/suggestions/my").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
                  
+                // .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                 .requestMatchers(
+                         "/v3/api-docs/**",
+                         "/swagger-ui/**",
+                         "/swagger-ui.html"
+                     ).permitAll()
                  // Public endpoints
                  .requestMatchers("/api/menu/**").permitAll()
                  .requestMatchers("/api/orders/**").permitAll()

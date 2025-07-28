@@ -7,14 +7,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
+import Pcanteen.Backend.EmployeeRepository;
+import Pcanteen.Backend.Employee;
 @EnableJpaAuditing
 @SpringBootApplication
 public class BackendApplication implements CommandLineRunner {
 
     @Autowired
-    private EmployeeRepository employeeRepository;
+    private EmployeeRepository employeeRepository; 
     
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -28,6 +30,7 @@ public class BackendApplication implements CommandLineRunner {
         return new RestTemplate();
     }
 
+    
     @Override
     public void run(String... args) throws Exception {
         // Create initial super admin if not exists

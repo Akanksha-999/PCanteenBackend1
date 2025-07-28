@@ -280,6 +280,10 @@ import java.util.Optional;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Admin API", description = "Operations related to admin") // Change name/desc as per controller
+//@RestController
 @RestController
 @RequestMapping("/api/admin")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -351,6 +355,11 @@ public class AdminController {
             throw new CustomException("Employee ID already exists");
         }
         
+        // Normalize mobile number
+        String rawNumber = employee.getMobileNumber();
+        String normalizedNumber = rawNumber.startsWith("+91") ? rawNumber : "+91" + rawNumber;
+        employee.setMobileNumber(normalizedNumber);
+        
         // Hash the password before saving
         employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         
@@ -373,6 +382,14 @@ public class AdminController {
     public ResponseEntity<Employee> updateCustomer(@PathVariable Long id, @RequestBody Employee employeeDetails) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Customer not found"));
+        
+
+        // Normalize mobile number if it's being updated
+        if (employeeDetails.getMobileNumber() != null) {
+            String rawNumber = employeeDetails.getMobileNumber();
+            String normalizedNumber = rawNumber.startsWith("+91") ? rawNumber : "+91" + rawNumber;
+            employee.setMobileNumber(normalizedNumber);
+        }
         
         employee.setFirstName(employeeDetails.getFirstName());
         employee.setLastName(employeeDetails.getLastName());

@@ -24,7 +24,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Order API", description = "Operations related to order") // Change name/desc as per controller
+//@RestController
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {

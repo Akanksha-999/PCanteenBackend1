@@ -31,27 +31,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 	}
 
 
-	/*@Override
-    public UserDetails loadUserByUsername(String employeeId) throws UsernameNotFoundException {
-        Employee employee = employeeRepository.findByEmployeeId(employeeId)
-                .orElseThrow(() -> new UsernameNotFoundException("Employee not found with ID: " + employeeId));
-      
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        if (employee.isSuperAdmin()) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"));
-        } else if (employee.isAdmin()) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        } else {
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-        }
-
-     
-        return new User(
-                employee.getEmployeeId(),
-                employee.getPassword(),
-                authorities
-        );
-    }*/
     
     @Override
     public UserDetails loadUserByUsername(String employeeId) throws UsernameNotFoundException {

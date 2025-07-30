@@ -286,7 +286,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 //@RestController
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
 public class AdminController {
 
     @Autowired

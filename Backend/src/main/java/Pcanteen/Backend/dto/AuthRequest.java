@@ -18,8 +18,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 //@Data
-@NoArgsConstructor
-@AllArgsConstructor
+//@NoArgsConstructor
+//@AllArgsConstructor
 public class AuthRequest {
 private String employeeId;
 private String password;
@@ -36,7 +36,7 @@ public String getPassword() {
 public void setPassword(String password) {
 	this.password = password;
 }
-/*
+
 public AuthRequest(String employeeId, String password) {
 	super();
 	this.employeeId = employeeId;
@@ -47,7 +47,7 @@ public AuthRequest() {
 	// TODO Auto-generated constructor stub
 }
 
-*/
+
 }
 
 

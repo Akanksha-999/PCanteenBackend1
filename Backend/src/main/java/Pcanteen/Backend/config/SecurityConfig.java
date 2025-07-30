@@ -36,43 +36,35 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
-
-            // Use the CORS configuration defined in your separate CorsConfig
+            // Use the CORS bean you defined in CorsConfig
             .cors(Customizer.withDefaults())
-
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
             .authorizeHttpRequests(auth -> auth
-                // Public health/root & Swagger
+                // public health/root & swagger
                 .requestMatchers("/", "/health", "/error").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
-                // Public auth endpoints
+                // public auth endpoints
                 .requestMatchers("/api/auth/**").permitAll()
 
-                // Public data you allowed
+                // public, as per your earlier requirement
                 .requestMatchers("/api/menu/**", "/api/orders/**", "/api/transactions/**").permitAll()
 
-                // Admin-only
-                // NOTE: If your GrantedAuthorities are "ADMIN"/"SUPER_ADMIN" (no "ROLE_" prefix),
-                // use hasAnyAuthority(...). If they are "ROLE_ADMIN"/"ROLE_SUPER_ADMIN", use hasAnyRole(...).
+                // admin-only
                 .requestMatchers("/api/admin/**",
                                  "/api/feedback/notifications/create",
                                  "/api/feedback/suggestions/all",
                                  "/api/feedback/suggestions/respond/**")
-                    //.hasAnyRole("ADMIN", "SUPER_ADMIN")   // use if your authorities have "ROLE_" prefix
-                    .hasAnyAuthority("ADMIN", "SUPER_ADMIN") // use if no "ROLE_" prefix
+                    .hasAnyRole("ADMIN", "SUPER_ADMIN")
 
-                // User or admin
+                // user or admin
                 .requestMatchers("/api/feedback/notifications/my",
                                  "/api/feedback/suggestions/create",
                                  "/api/feedback/suggestions/my")
-                    //.hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
-                    .hasAnyAuthority("USER", "ADMIN", "SUPER_ADMIN")
+                    .hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
 
                 .anyRequest().authenticated()
             )
-
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

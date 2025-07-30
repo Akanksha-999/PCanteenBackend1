@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Feedback API", description = "Operations related to feedback") // Change name/desc as per controller
 @RestController
 @RequestMapping("/api/feedback")
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
 public class FeedbackController {
 
     private final FeedbackRepository feedbackRepository;

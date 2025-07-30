@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 import Pcanteen.Backend.model.MenuItem;
 
-@Data
+//@Data
 public class MenuItemDTO {
     private Long id;
     private String menuId;

@@ -3,7 +3,7 @@ package Pcanteen.Backend.dto;
 import lombok.Data;
 import java.util.List;
 
-@Data
+//@Data
 public class BillDTO {
     private String employeeId;
     private String employeeName;

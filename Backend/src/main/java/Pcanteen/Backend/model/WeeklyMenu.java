@@ -9,7 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "weekly_menus")
-@Data
+//@Data
 public class WeeklyMenu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

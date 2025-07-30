@@ -5,7 +5,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Data
+//@Data
 public class WeeklyMenuDTO {
     private Long id;
     private LocalDateTime weekStartDate;

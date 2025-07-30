@@ -88,7 +88,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Data
+//@Data
 public class PriceHistoryDTO {
     private Long id;
     private String menuId;

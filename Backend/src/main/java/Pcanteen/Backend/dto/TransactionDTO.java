@@ -3,7 +3,7 @@ package Pcanteen.Backend.dto;
 import lombok.Data;
 import java.time.LocalDateTime;
 
-@Data
+//@Data
 public class TransactionDTO {
     private Long id;
     private String transactionId;

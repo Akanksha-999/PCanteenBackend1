@@ -2,7 +2,7 @@ package Pcanteen.Backend.dto;
 
 import lombok.Data;
 
-@Data
+//@Data
 public class TransactionRequest {
     private Long orderId; // Matches your Order entity ID type
     private String remark;

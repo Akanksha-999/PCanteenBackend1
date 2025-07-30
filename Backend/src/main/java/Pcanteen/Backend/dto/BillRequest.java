@@ -2,7 +2,7 @@ package Pcanteen.Backend.dto;
 
 import lombok.Data;
 
-@Data
+//@Data
 public class BillRequest {
     private String employeeId; // Matches your Employee entity
     private Integer month;

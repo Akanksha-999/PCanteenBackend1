@@ -11,7 +11,7 @@ import Pcanteen.Backend.dto.AuthResponse;
 
 @Entity
 @Table(name = "employee")
-@Data
+//@Data
 @EntityListeners(AuditingEntityListener.class)
 public class Employee {
 

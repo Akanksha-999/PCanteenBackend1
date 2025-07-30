@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "menu_items")
-@Data
+//@Data
 public class MenuItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

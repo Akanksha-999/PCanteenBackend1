@@ -36,7 +36,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;

@@ -17,7 +17,7 @@ package Pcanteen.Backend.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-@Data
+//@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthRequest {
@@ -36,6 +36,7 @@ public String getPassword() {
 public void setPassword(String password) {
 	this.password = password;
 }
+/*
 public AuthRequest(String employeeId, String password) {
 	super();
 	this.employeeId = employeeId;
@@ -46,7 +47,7 @@ public AuthRequest() {
 	// TODO Auto-generated constructor stub
 }
 
-
+*/
 }
 
 

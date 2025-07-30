@@ -84,7 +84,7 @@ public class SignUpRequest {
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
-	public SignUpRequest() {
+	/*public SignUpRequest() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -100,7 +100,7 @@ public class SignUpRequest {
 		this.mobileNumber = mobileNumber;
 		this.customerType = customerType;
 		this.isActive = isActive;
-	}
+	}*/
 	@Override
 	public String toString() {
 		return "SignUpRequest [firstName=" + firstName + ", lastName=" + lastName + ", department=" + department

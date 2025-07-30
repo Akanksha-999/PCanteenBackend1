@@ -1,12 +1,7 @@
 package Pcanteen.Backend.config;
 
-
 import Pcanteen.Backend.security.CustomUserDetailsService;
 import Pcanteen.Backend.security.JwtAuthenticationFilter;
-import Pcanteen.Backend.security.JwtUtil;
-import lombok.RequiredArgsConstructor;
-
-//import org.apache.catalina.filters.CorsFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,105 +13,89 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-//@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final CustomUserDetailsService userDetailsService;
-    
-    
 
-     @Autowired
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, CustomUserDetailsService userDetailsService) {
-		super();
-		this.jwtAuthFilter = jwtAuthFilter;
-		this.userDetailsService = userDetailsService;
-	}
+    @Autowired
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter,
+                          CustomUserDetailsService userDetailsService) {
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.userDetailsService = userDetailsService;
+    }
 
-  /*   @Bean
-     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-         http
-             .cors(Customizer.withDefaults()) // 👈 Enables CORS with your CorsFilter bean
-             .csrf(AbstractHttpConfigurer::disable)
-             .authorizeHttpRequests(auth -> auth
-                 .requestMatchers("/api/auth/**").permitAll()
-                 .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
-                // .requestMatchers("/api/menu/**").hasRole("ADMIN","EMPLOYEE")
-                 .requestMatchers("/api/menu/**").permitAll()
-                 //.requestMatchers("/api/menu/**").hasRole("ADMIN")
-                // .requestMatchers("/api/transactions/**").hasRole("ADMIN")
-                 .requestMatchers("/api/orders/**").permitAll()
-                 .requestMatchers("/api/transactions/**").permitAll()
-                 .requestMatchers("/api/feedback/notifications/my").authenticated()
-                 .requestMatchers("/api/feedback/suggestions").authenticated()
-                 .requestMatchers("/api/feedback/notifications/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
-                 .requestMatchers("/api/feedback/suggestions/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
-                 
-                 .anyRequest().authenticated()
-             )
-             .sessionManagement(sess -> 
-                 sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-             )
-             .authenticationProvider(authenticationProvider())
-             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                // public health/root & swagger
+                .requestMatchers("/", "/health", "/error").permitAll()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
-         return http.build();
-     }*/
-     
-     @Bean
-     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-         http
-             .cors(Customizer.withDefaults())
-             .csrf(AbstractHttpConfigurer::disable)
-             .authorizeHttpRequests(auth -> auth
-                 .requestMatchers("/api/auth/**").permitAll()
-                 // Admin-only endpoints
-                 .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
-                 .requestMatchers("/api/feedback/notifications/create").hasAnyRole("ADMIN", "SUPER_ADMIN")
-                 .requestMatchers("/api/feedback/suggestions/all").hasAnyRole("ADMIN", "SUPER_ADMIN")
-                 .requestMatchers("/api/feedback/suggestions/respond/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
-                 
-                 // Employee accessible endpoints
-                 .requestMatchers("/api/feedback/notifications/my").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
-                 .requestMatchers("/api/feedback/suggestions/create").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
-                 .requestMatchers("/api/feedback/suggestions/my").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
-                 
-                // .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                 .requestMatchers(
-                         "/v3/api-docs/**",
-                         "/swagger-ui/**",
-                         "/swagger-ui.html"
-                     ).permitAll()
-                 // Public endpoints
-                 .requestMatchers("/api/menu/**").permitAll()
-                 .requestMatchers("/api/orders/**").permitAll()
-                 .requestMatchers("/api/transactions/**").permitAll()
-                 .anyRequest().authenticated()
-             )
-             .sessionManagement(sess -> 
-                 sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-             )
-             .authenticationProvider(authenticationProvider())
-             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                // public auth endpoints
+                .requestMatchers("/api/auth/**").permitAll()
 
-         return http.build();
-     }
+                // public data you already had
+                .requestMatchers("/api/menu/**", "/api/orders/**", "/api/transactions/**").permitAll()
 
-	
-	
+                // admin-only (see note below re ROLE_ prefix)
+                .requestMatchers("/api/admin/**",
+                                 "/api/feedback/notifications/create",
+                                 "/api/feedback/suggestions/all",
+                                 "/api/feedback/suggestions/respond/**")
+                    .hasAnyRole("ADMIN", "SUPER_ADMIN")
+
+                // user or admin
+                .requestMatchers("/api/feedback/notifications/my",
+                                 "/api/feedback/suggestions/create",
+                                 "/api/feedback/suggestions/my")
+                    .hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
+
+                .anyRequest().authenticated()
+            )
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    // CORS for frontend(s) — adjust origins to your actual domains
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration cfg = new CorsConfiguration();
+        // During testing you can use patterns "*", but better list exact origins:
+        cfg.setAllowedOriginPatterns(List.of(
+            "http://localhost:3000",
+            "https://pcanteen-backend-production.up.railway.app"   // backend itself (harmless)
+        //   , "https://your-frontend-domain.com"                      // TODO: replace if you have one
+        ));
+        cfg.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+        cfg.setAllowedHeaders(List.of("Authorization","Content-Type"));
+        cfg.setExposedHeaders(List.of("Authorization","Content-Type"));
+        cfg.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", cfg);
+        return source;
+    }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -127,8 +106,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
@@ -136,7 +114,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
-    
 }
-

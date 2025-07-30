@@ -1,51 +1,37 @@
-/*package Pcanteen.Backend.config;
-
-
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-@Configuration
-public class CorsConfig implements WebMvcConfigurer {
- @Override
- public void addCorsMappings(CorsRegistry registry) {
-     registry.addMapping("/**")
-             .allowedOrigins("http://localhost:3000") 
-             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-             .allowedHeaders("*")
-             .allowCredentials(true);
- }
-}
-*/
 package Pcanteen.Backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+
+import java.util.List;
 
 @Configuration
 public class CorsConfig {
-    
+
     @Bean
-    public CorsFilter corsFilter() {
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration cfg = new CorsConfiguration();
+
+        // List each allowed origin separately — do NOT combine with commas
+        cfg.setAllowedOriginPatterns(List.of(
+            "http://localhost:3000",
+            "https://resplendent-swan-b5aa25.netlify.app"  // <-- your Netlify site
+        ));
+
+        cfg.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+        cfg.setAllowedHeaders(List.of("Authorization","Content-Type","X-User","Accept","Origin","X-Requested-With"));
+        cfg.setExposedHeaders(List.of("Authorization","Content-Type"));
+
+        // You’re using JWT in Authorization header, not cookies:
+        cfg.setAllowCredentials(false);
+
+        cfg.setMaxAge(3600L);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        
-       // config.setAllowCredentials(true);
-       //config.addAllowedOrigin("http://localhost:3000");
-       //config.addAllowedOrigin("http://localhost:8080/swagger-ui/index.html");
-       config.addAllowedOrigin("http://192.168.140.36:3000,http://localhost:3000");
-
-
-       // config.addAllowedOrigin("*");
-
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        
-        
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+        source.registerCorsConfiguration("/**", cfg);
+        return source;
     }
 }
